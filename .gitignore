@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.env
+.tmp.driveupload
+.tmp.drivedownload
+.vscode/
+LandingPage2.jsx

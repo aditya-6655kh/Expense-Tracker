@@ -1,18 +1,37 @@
-import React, { use } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
-import Dashboard from "./components/Dashboard.jsx";
-import LandingPage from "./components/LandingPage2.jsx";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
+import Login from "./pages/Login.jsx";
+import Dashboard from "./pages/DashBoard.jsx";
+import ProtectedRoute from "./context/ProtectedRoute.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+import Home from "./pages/Home.jsx";
+import Register from "./pages/Register.jsx";
+
 export default function App() {
   return (
-    // <Router>
-    //   <div className="min-h-screen bg-grey-100 flex item-center justify-center p-5">
-    //     <Routes>
-    //       <Route path="/" element={<Dashboard />} />
-    //       <Route path="*" element={<h1>404 - Not Found</h1>} />
-    //     </Routes>
-    //   </div>
-    // </Router>
-    <LandingPage />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }

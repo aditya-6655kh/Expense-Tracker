@@ -1,190 +1,288 @@
 import { useState, useEffect } from "react";
-import {X} from "lucide-react";
+import { X, TrendingUp, TrendingDown, ArrowUpRight, ArrowDownRight, Receipt } from "lucide-react";
 import api from "../api/axios";
-import { useNavigate } from "react-router-dom";
 
-const AddTransaction = ({isOpen, isClose, onSuccess, transactionToEdit}) => {
-    const [formData, setFormData] = useState({
-        amount: "",
-        description: "",
-        type: "expense",
-        date: new Date().toISOString().split("T")[0],
-        category_id: "",
-    });
-    const [categories, setCategories] = useState([]);
-    const navigate = useNavigate();  
+const GlobalStyles = () => (
+  <style>{`
+    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap');
+    * { font-family: 'DM Sans', sans-serif; }
+    .font-display { font-family: 'Sora', sans-serif; }
 
-    useEffect(() => {
-        if(isOpen){
-          api.get("/categories").then((res) => {setCategories(res.data)});
-
-          if(transactionToEdit) {
-            setFormData({
-              amount: transactionToEdit.amount,
-              description: transactionToEdit.description,
-              type: transactionToEdit.type,
-              date: new Date(transactionToEdit.date).toISOString().split("T")[0],
-              category_id: transactionToEdit.category_id,
-            });
-          }else{
-            setFormData({
-              amount: "",
-              description: "",
-              type: "expense",
-              date: new Date().toISOString().split("T")[0],
-              category_id: "",
-            });
-          }
-        }
-    }, [isOpen, transactionToEdit]);
-
-    const handleOverlayClick = (e) => {
-        if (e.target === e.currentTarget) {
-          isClose();
-        }
+    @keyframes overlayIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
-
-    const handleChange = async (e) => {
-        e.preventDefault();
-
-        try{
-          if(transactionToEdit){
-            await api.put(`/transactions/${transactionToEdit.transaction_id}`, formData);
-          }else{
-            await api.post("/transactions", formData);
-          }
-          onSuccess();
-          isClose();
-          setFormData({...formData, amount: "", description: "", category_id: ""});
-        }catch(err){
-            alert("Failed to add transaction");
-        }
+    @keyframes cardIn {
+      from { opacity: 0; transform: scale(.94) translateY(16px); }
+      to   { opacity: 1; transform: scale(1)  translateY(0); }
     }
+    .overlay-in { animation: overlayIn .2s ease both; }
+    .card-in    { animation: cardIn .25s ease both; }
 
-    if(!isOpen) return null;
+    .form-input {
+      width: 100%;
+      padding: .7rem 1rem;
+      background: rgba(248,250,252,0.8);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: .875rem;
+      color: #1e293b;
+      outline: none;
+      transition: all .2s ease;
+    }
+    .form-input:focus {
+      border-color: #3b82f6;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(59,130,246,.1);
+    }
+    .form-input::placeholder { color: #94a3b8; }
 
-    return (
-    /* THE BACKGROUND OVERLAY
-      - bg-black/40: Semi-transparent black
-      - backdrop-blur-md: This creates the heavy blur effect on the dashboard behind it
-      - z-50: Ensures it sits on top of everything else
-    */
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md p-4 animate-in fade-in duration-200">
-      
-      {/* THE FORM CONTAINER
-        - scale-in animation makes it pop up smoothly
-      */}
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all animate-in zoom-in-95 duration-200">
-        
-        {/* Header */}
-        <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-          <h2 className="text-xl font-bold text-gray-800">New Transaction</h2>
-          <button 
-            onClick={isClose} 
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition"
-          >
-            <X size={20} />
-          </button>
-        </div>
+    .amount-input {
+      width: 100%;
+      padding: .7rem 1rem .7rem 2.25rem;
+      background: rgba(248,250,252,0.8);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: .875rem;
+      color: #1e293b;
+      outline: none;
+      transition: all .2s ease;
+    }
+    .amount-input:focus {
+      border-color: #3b82f6;
+      background: white;
+      box-shadow: 0 0 0 4px rgba(59,130,246,.1);
+    }
+    .amount-input::placeholder { color: #94a3b8; }
+  `}</style>
+);
 
-        {/* Form Body */}
-        <div className="p-6">
-          <form onSubmit={handleChange} className="space-y-5">
-            
-            {/* Type Toggle (Income / Expense) */}
-            <div className="flex bg-gray-100 p-1 rounded-xl">
-              {["expense", "income"].map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, type })}
-                  className={`flex-1 py-2 text-sm font-bold rounded-lg capitalize transition-all ${
-                    formData.type === type
-                      ? type === "income" 
-                        ? "bg-green-500 text-white shadow-md" 
-                        : "bg-red-500 text-white shadow-md"
-                      : "text-gray-500 hover:text-gray-700"
-                  }`}
-                >
-                  {type}
-                </button>
-              ))}
-            </div>
+const AddTransaction = ({ isOpen, isClose, onSuccess, transactionToEdit }) => {
+  const [formData, setFormData] = useState({
+    amount: "",
+    description: "",
+    type: "expense",
+    date: new Date().toISOString().split("T")[0],
+    category_id: "",
+  });
+  const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-            {/* Amount & Date Row */}
-            <div className="grid grid-cols-2 gap-4">
+  useEffect(() => {
+    if (isOpen) {
+      api.get("/categories").then((res) => setCategories(res.data));
+
+      if (transactionToEdit) {
+        setFormData({
+          amount: transactionToEdit.amount,
+          description: transactionToEdit.description,
+          type: transactionToEdit.type,
+          date: new Date(transactionToEdit.date).toISOString().split("T")[0],
+          category_id: transactionToEdit.category_id,
+        });
+      } else {
+        setFormData({
+          amount: "",
+          description: "",
+          type: "expense",
+          date: new Date().toISOString().split("T")[0],
+          category_id: "",
+        });
+      }
+    }
+  }, [isOpen, transactionToEdit]);
+
+  const handleOverlayClick = (e) => {
+    if (e.target === e.currentTarget) isClose();
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      if (transactionToEdit) {
+        await api.put(`/transactions/${transactionToEdit.transaction_id}`, formData);
+      } else {
+        await api.post("/transactions", formData);
+      }
+      onSuccess();
+      isClose();
+      setFormData({ ...formData, amount: "", description: "", category_id: "" });
+    } catch {
+      alert("Failed to save transaction");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (!isOpen) return null;
+
+  const isIncome = formData.type === "income";
+  const filteredCategories = categories.filter((c) => c.type === formData.type);
+
+  return (
+    <>
+      <GlobalStyles />
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 overlay-in"
+        style={{ background: "rgba(15,23,42,0.45)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)" }}
+        onClick={handleOverlayClick}
+      >
+        <div className="card-in bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden">
+
+          {/* Header */}
+          <div className="px-6 pt-6 pb-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`p-2.5 rounded-xl shadow ${isIncome ? "bg-gradient-to-br from-green-500 to-teal-500" : "bg-gradient-to-br from-red-500 to-pink-500"}`}>
+                <Receipt size={18} className="text-white" />
+              </div>
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Amount</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-gray-400 font-medium">₹</span>
+                <h2 className="text-lg font-bold font-display text-gray-900 leading-tight">
+                  {transactionToEdit ? "Edit Transaction" : "New Transaction"}
+                </h2>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {transactionToEdit ? "Update the details below" : "Fill in the details below"}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={isClose}
+              className="p-2 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-50 transition"
+            >
+              <X size={18} />
+            </button>
+          </div>
+
+          {/* Gradient divider */}
+          <div className="h-px mx-6 bg-gradient-to-r from-blue-100 via-purple-100 to-transparent mb-5" />
+
+          {/* Body */}
+          <div className="px-6 pb-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
+
+              {/* Type toggle */}
+              <div className="grid grid-cols-2 gap-2 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
+                {["expense", "income"].map((type) => {
+                  const active = formData.type === type;
+                  const isInc = type === "income";
+                  return (
+                    <button
+                      key={type}
+                      type="button"
+                      onClick={() => setFormData({ ...formData, type, category_id: "" })}
+                      className={`flex items-center justify-center gap-2 py-2.5 text-sm font-bold rounded-xl capitalize transition-all
+                        ${active
+                          ? isInc
+                            ? "bg-gradient-to-r from-green-500 to-teal-500 text-white shadow-md"
+                            : "bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-md"
+                          : "text-gray-500 hover:text-gray-700 hover:bg-white hover:shadow-sm"
+                        }`}
+                    >
+                      {isInc ? <TrendingUp size={15} /> : <TrendingDown size={15} />}
+                      {type.charAt(0).toUpperCase() + type.slice(1)}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Amount & Date row */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Amount</label>
+                  <div className="relative">
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm pointer-events-none">₹</span>
+                    <input
+                      type="number"
+                      required
+                      className="amount-input"
+                      placeholder="0.00"
+                      value={formData.amount}
+                      onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Date</label>
                   <input
-                    type="number"
+                    type="date"
                     required
-                    className="w-full pl-8 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition outline-none"
-                    placeholder="0.00"
-                    value={formData.amount}
-                    onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                    className="form-input"
+                    value={formData.date}
+                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
                   />
                 </div>
               </div>
 
+              {/* Category */}
               <div>
-                <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Date</label>
-                <input
-                  type="date"
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Category</label>
+                <select
                   required
-                  className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition outline-none"
-                  value={formData.date}
-                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                  className="form-input appearance-none cursor-pointer"
+                  value={formData.category_id}
+                  onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+                >
+                  <option value="">Select a category…</option>
+                  {filteredCategories.map((c) => (
+                    <option key={c.category_id} value={c.category_id}>{c.name}</option>
+                  ))}
+                </select>
+                {filteredCategories.length === 0 && (
+                  <p className="text-xs text-amber-500 mt-1.5 font-medium">
+                    No {formData.type} categories yet — add one first.
+                  </p>
+                )}
+              </div>
+
+              {/* Description */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Description</label>
+                <input
+                  type="text"
+                  required
+                  className="form-input"
+                  placeholder="What was this for?"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                 />
               </div>
-            </div>
 
-            {/* Category */}
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Category</label>
-              <select
-                required
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition outline-none appearance-none"
-                value={formData.category_id}
-                onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
+              {/* Amount preview badge */}
+              {formData.amount && (
+                <div className={`flex items-center gap-2 px-4 py-2.5 rounded-xl border ${isIncome ? "bg-green-50 border-green-100" : "bg-red-50 border-red-100"}`}>
+                  {isIncome
+                    ? <ArrowUpRight size={16} className="text-green-600 shrink-0" />
+                    : <ArrowDownRight size={16} className="text-red-500 shrink-0" />}
+                  <span className={`text-sm font-bold ${isIncome ? "text-green-700" : "text-red-600"}`}>
+                    {isIncome ? "+" : "−"}₹{parseFloat(formData.amount || 0).toLocaleString("en-IN")}
+                  </span>
+                  {formData.description && (
+                    <span className="text-xs text-gray-400 truncate">· {formData.description}</span>
+                  )}
+                </div>
+              )}
+
+              {/* Submit */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-100 transition-all mt-1"
               >
-                <option value="">Select a category...</option>
-                {categories
-                  .filter((c) => c.type === formData.type)
-                  .map((c) => (
-                    <option key={c.category_id} value={c.category_id}>
-                      {c.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-
-            {/* Description */}
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Description</label>
-              <input
-                type="text"
-                required
-                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition outline-none"
-                placeholder="What was this for?"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full bg-gray-900 hover:bg-black text-white font-bold py-3 rounded-xl transition shadow-lg mt-2"
-            >
-              Save Transaction
-            </button>
-          </form>
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+                    Saving…
+                  </>
+                ) : (
+                  transactionToEdit ? "Update Transaction" : "Save Transaction"
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
-}
+};
 
 export default AddTransaction;

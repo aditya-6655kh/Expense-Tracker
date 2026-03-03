@@ -6,3 +6,5 @@ dist/
 .vscode/
 LandingPage2.jsx
 test-db.js
+
+DashBoard3.jsx

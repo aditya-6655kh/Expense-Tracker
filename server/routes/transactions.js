@@ -38,4 +38,47 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  const {id} = req.params;
+  const {amount, description, category_id, date} = req.body;
+  const userId = req.user.userId;
+
+  try{
+    const result = await db.query(
+      `update transactions set amount = $1, description = $2, category_id=$3, date=$4 where transaction_id=$5 and user_id=$6 returning *`,
+      [amount, description, category_id, date, id, userId]
+    );
+
+    if(result.rows.length === 0) {
+      return res.status(404).json({error: "Transaction not found or unauthorized."});
+    }
+
+    res.json(result.rows[0]);
+  }catch(err){
+    console.log(err);
+    res.status(500).json({error: "server error"});
+  }
+})
+
+router.delete("/:id", async (req, res) => {
+  try{
+    const {id} = req.params;
+    const userId = req.user.userId;
+
+    const result = await db.query(
+      `delete from transactions where transaction_id = $1 and user_id = $2 returning *`,
+      [id, userId]
+    );
+
+    if(result.rowCount === 0){
+      return res.status(404).json({error: "Transaction not found"});
+    }
+
+    res.json({message: "Transaction deleted successfully"});
+  }catch(err){
+    console.error(err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 module.exports = router;

@@ -12,6 +12,7 @@ import ProtectedRoute from "./context/ProtectedRoute.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 import Home from "./pages/Home.jsx";
 import Register from "./pages/Register.jsx";
+import TestingPage from "./pages/TestingPage.jsx";
 
 export default function App() {
   return (
@@ -28,6 +29,7 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route path="/testing" element={<TestingPage />} />
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

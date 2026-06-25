@@ -38,10 +38,9 @@ export const AuthProvider = ({ children }) => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-screen bg-gray-100">
-        <h2 className="text-2xl font-bold text-gray-600">
-          Initializing App...
-        </h2>
+      <div className="flex flex-col justify-center items-center h-screen bg-[var(--color-bg)]">
+        <div className="w-10 h-10 rounded-full border-3 border-[var(--color-border)] border-t-[var(--color-primary)] animate-spin mb-4" />
+        <p className="text-sm text-[var(--color-text-muted)] font-medium">Loading…</p>
       </div>
     );
   }

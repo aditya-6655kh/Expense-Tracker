@@ -1,55 +1,8 @@
 import { useState } from "react";
-import { useAuth } from "../context/AuthContext.jsx";
+import { useAuth } from "../context/AuthContext";
 import { useNavigate, Link, Navigate } from "react-router-dom";
 import { Mail, Lock, ArrowRight, Eye, EyeOff, LayoutDashboard } from "lucide-react";
-
-const GlobalStyles = () => (
-  <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500&display=swap');
-    * { font-family: 'DM Sans', sans-serif; }
-    h1,h2,h3,.font-display { font-family: 'Sora', sans-serif; }
-
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50%       { transform: translateY(-10px); }
-    }
-    .fade-up   { animation: fadeUp .5s ease both; }
-    .fade-up-1 { animation: fadeUp .5s .1s ease both; }
-    .fade-up-2 { animation: fadeUp .5s .2s ease both; }
-    .fade-up-3 { animation: fadeUp .5s .3s ease both; }
-    .fade-up-4 { animation: fadeUp .5s .4s ease both; }
-    .float     { animation: float 4s ease-in-out infinite; }
-
-    .input-field {
-      width: 100%;
-      padding: 0.75rem 1rem 0.75rem 2.75rem;
-      background: rgba(255,255,255,0.7);
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      color: #1e293b;
-      outline: none;
-      transition: all .2s ease;
-    }
-    .input-field:focus {
-      border-color: #3b82f6;
-      background: white;
-      box-shadow: 0 0 0 4px rgba(59,130,246,.1);
-    }
-    .input-field::placeholder { color: #94a3b8; }
-
-    .glass-card {
-      background: rgba(255,255,255,0.75);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.9);
-    }
-  `}</style>
-);
+import Button from "../components/ui/Button";
 
 export default function Login() {
   const [userDetails, setUserDetails] = useState({ email: "", password: "" });
@@ -67,7 +20,7 @@ export default function Login() {
       await login(userDetails.email, userDetails.password);
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      setError(err.response?.data?.error || "Login failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -76,52 +29,47 @@ export default function Login() {
   if (user) return <Navigate to="/dashboard" />;
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-purple-950 px-4">
-      <GlobalStyles />
+    <div className="min-h-screen relative flex items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-950 px-4">
+      {/* Decorative blobs */}
+      <div className="absolute top-[-80px] left-[-80px] w-80 h-80 rounded-full bg-blue-500 opacity-15 blur-3xl pointer-events-none float" />
+      <div className="absolute bottom-[-60px] right-[-60px] w-96 h-96 rounded-full bg-indigo-600 opacity-15 blur-3xl pointer-events-none" />
 
-      {/* decorative blobs */}
-      <div className="absolute top-[-80px] left-[-80px] w-80 h-80 rounded-full bg-blue-500 opacity-20 blur-3xl pointer-events-none float" />
-      <div className="absolute bottom-[-60px] right-[-60px] w-96 h-96 rounded-full bg-purple-600 opacity-20 blur-3xl pointer-events-none" />
-      <div className="absolute top-1/2 right-1/4 w-48 h-48 rounded-full bg-indigo-400 opacity-10 blur-2xl pointer-events-none" />
-
-      {/* card */}
-      <div className="glass-card rounded-3xl shadow-2xl w-full max-w-md p-8 sm:p-10">
-
-        {/* logo */}
+      {/* Card */}
+      <div className="glass-card rounded-2xl shadow-2xl w-full max-w-md p-8 sm:p-10">
+        {/* Logo */}
         <div className="flex justify-center mb-8 fade-up">
           <Link to="/" className="flex items-center gap-2.5 group">
-            <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-xl shadow-lg group-hover:scale-105 transition">
+            <div className="bg-[var(--color-primary)] p-2.5 rounded-xl shadow-lg group-hover:scale-105 transition">
               <LayoutDashboard size={20} className="text-white" />
             </div>
-            <span className="text-xl font-bold font-display bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              ExpenseTracker
+            <span className="text-xl font-bold font-display text-[var(--color-text)]">
+              Expense<span className="text-[var(--color-primary)]">Tracker</span>
             </span>
           </Link>
         </div>
 
-        {/* heading */}
+        {/* Heading */}
         <div className="text-center mb-8 fade-up-1">
-          <h2 className="text-2xl font-bold font-display text-gray-900 mb-1">Welcome back</h2>
-          <p className="text-gray-500 text-sm">Log in to your account to continue</p>
+          <h2 className="text-2xl font-bold font-display text-[var(--color-text)] mb-1">Welcome back</h2>
+          <p className="text-[var(--color-text-muted)] text-sm">Log in to your account to continue</p>
         </div>
 
-        {/* error */}
+        {/* Error */}
         {error && (
-          <div className="mb-5 px-4 py-3 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl fade-up">
+          <div className="mb-5 px-4 py-3 bg-[var(--color-danger-light)] border border-red-100 text-[var(--color-danger)] text-sm rounded-xl fade-up font-medium">
             {error}
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-
-          {/* email */}
+          {/* Email */}
           <div className="fade-up-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
+            <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Email</label>
             <div className="relative">
-              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" />
               <input
                 type="email"
-                className="input-field"
+                className="input-field input-with-icon"
                 placeholder="john@example.com"
                 value={userDetails.email}
                 onChange={(e) => setUserDetails({ ...userDetails, email: e.target.value })}
@@ -130,14 +78,14 @@ export default function Login() {
             </div>
           </div>
 
-          {/* password */}
+          {/* Password */}
           <div className="fade-up-3">
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
+            <label className="block text-sm font-medium text-[var(--color-text-secondary)] mb-1.5">Password</label>
             <div className="relative">
-              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+              <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] pointer-events-none" />
               <input
                 type={showPassword ? "text" : "password"}
-                className="input-field"
+                className="input-field input-with-icon"
                 placeholder="Enter your password"
                 value={userDetails.password}
                 onChange={(e) => setUserDetails({ ...userDetails, password: e.target.value })}
@@ -146,45 +94,32 @@ export default function Login() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[var(--color-text-muted)] hover:text-[var(--color-primary)] transition"
               >
                 {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
           </div>
 
-          {/* submit */}
+          {/* Submit */}
           <div className="fade-up-4 pt-2">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-60 text-white font-semibold py-3 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-100 transition-all"
-            >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  Logging in…
-                </>
-              ) : (
-                <>
-                  Log In <ArrowRight size={17} />
-                </>
-              )}
-            </button>
+            <Button type="submit" variant="primary" size="lg" isLoading={isLoading} className="w-full">
+              {isLoading ? "Logging in…" : <><span>Log In</span> <ArrowRight size={17} /></>}
+            </Button>
           </div>
         </form>
 
-        {/* divider */}
+        {/* Divider */}
         <div className="flex items-center gap-3 my-6 fade-up-4">
           <div className="flex-1 h-px bg-gray-200" />
-          <span className="text-xs text-gray-400 font-medium">or</span>
+          <span className="text-xs text-[var(--color-text-muted)] font-medium">or</span>
           <div className="flex-1 h-px bg-gray-200" />
         </div>
 
-        {/* register link */}
-        <p className="text-center text-sm text-gray-500 fade-up-4">
+        {/* Register link */}
+        <p className="text-center text-sm text-[var(--color-text-muted)] fade-up-4">
           Don't have an account?{" "}
-          <Link to="/register" className="text-blue-600 font-semibold hover:text-purple-600 transition">
+          <Link to="/register" className="text-[var(--color-primary)] font-semibold hover:underline transition">
             Sign up for free
           </Link>
         </p>

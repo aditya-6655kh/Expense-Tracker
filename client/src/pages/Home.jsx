@@ -1,151 +1,166 @@
 import { useNavigate } from "react-router-dom";
-import { Wallet, TrendingUp, TrendingDown, PieChart, ShieldCheck, Zap, ArrowRight, BadgeIndianRupee } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
+import {
+  ArrowRight, Wallet, TrendingUp, TrendingDown, PieChart as PieChartIcon,
+  ShieldCheck, Zap, BadgeIndianRupee, LayoutDashboard, CheckCircle2,
+} from "lucide-react";
 
 const Home = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const features = [
     {
-      icon: <TrendingUp size={22} className="text-blue-600" />,
-      bg: "bg-blue-50",
+      icon: TrendingUp, color: "text-emerald-600", bg: "bg-emerald-50",
       title: "Track Income",
-      desc: "Log every income source and watch your earnings grow over time with clear visual reports.",
+      desc: "Log every income source and watch your earnings grow with clear visual reports.",
     },
     {
-      icon: <TrendingDown size={22} className="text-red-500" />,
-      bg: "bg-red-50",
+      icon: TrendingDown, color: "text-red-500", bg: "bg-red-50",
       title: "Monitor Expenses",
-      desc: "Categorize your spending and instantly see where your money goes each month.",
+      desc: "Categorize spending and instantly see where your money goes each month.",
     },
     {
-      icon: <PieChart size={22} className="text-purple-600" />,
-      bg: "bg-purple-50",
+      icon: PieChartIcon, color: "text-violet-600", bg: "bg-violet-50",
       title: "Visual Analytics",
-      desc: "Beautiful charts and breakdowns so you can make smarter financial decisions.",
+      desc: "Beautiful charts and breakdowns for smarter financial decisions.",
     },
     {
-      icon: <ShieldCheck size={22} className="text-green-600" />,
-      bg: "bg-green-50",
+      icon: ShieldCheck, color: "text-blue-600", bg: "bg-blue-50",
       title: "Secure & Private",
-      desc: "Your financial data stays yours. Authenticated access keeps your records safe.",
+      desc: "JWT authentication, rate limiting, and encrypted passwords keep you safe.",
     },
     {
-      icon: <Zap size={22} className="text-yellow-500" />,
-      bg: "bg-yellow-50",
+      icon: Zap, color: "text-amber-500", bg: "bg-amber-50",
       title: "Instant Insights",
-      desc: "Real-time balance, income, and expense stats always visible on your dashboard.",
+      desc: "Real-time balance, income, and expense stats always at your fingertips.",
     },
     {
-      icon: <BadgeIndianRupee size={22} className="text-indigo-600" />,
-      bg: "bg-indigo-50",
+      icon: BadgeIndianRupee, color: "text-indigo-600", bg: "bg-indigo-50",
       title: "INR Focused",
-      desc: "Built specifically for Indian users with native ₹ currency formatting throughout.",
+      desc: "Built for Indian users with native ₹ currency formatting throughout.",
     },
-  ];
-
-  const mockTransactions = [
-    { id: 1, desc: "Freelance Payment", category: "Income", amount: "+₹45,000", type: "income", date: "Mar 1" },
-    { id: 2, desc: "Grocery Shopping", category: "Food", amount: "-₹2,340", type: "expense", date: "Mar 2" },
-    { id: 3, desc: "Netflix Subscription", category: "Entertainment", amount: "-₹649", type: "expense", date: "Mar 3" },
-    { id: 4, desc: "Salary Credit", category: "Income", amount: "+₹85,000", type: "income", date: "Mar 5" },
   ];
 
   return (
-    <div className="min-h-screen bg-white font-sans text-gray-900 overflow-x-hidden">
+    <div className="min-h-screen bg-white text-[var(--color-text)] overflow-x-hidden">
 
       {/* ── Navbar ── */}
-      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            ExpenseTracker
-          </span>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => navigate("/login")}
-              className="text-sm font-medium text-gray-600 hover:text-blue-600 px-4 py-2 rounded-lg transition"
-            >
-              Log In
-            </button>
-            <button
-              onClick={() => navigate("/register")}
-              className="text-sm font-semibold bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg shadow transition"
-            >
-              Get Started
-            </button>
+      <nav className="sticky top-0 z-40 bg-white/80 backdrop-blur-lg border-b border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="bg-[var(--color-primary)] p-2 rounded-xl">
+              <LayoutDashboard size={18} className="text-white" />
+            </div>
+            <span className="text-lg font-bold font-display">
+              Expense<span className="text-[var(--color-primary)]">Tracker</span>
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            {user ? (
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="text-sm font-semibold bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-5 py-2 rounded-xl shadow-sm transition"
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-primary)] px-4 py-2 rounded-lg transition"
+                >
+                  Log In
+                </button>
+                <button
+                  onClick={() => navigate("/register")}
+                  className="text-sm font-semibold bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white px-5 py-2 rounded-xl shadow-sm transition"
+                >
+                  Get Started
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
 
       {/* ── Hero ── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-blue-600 via-blue-700 to-purple-700 text-white">
-        {/* decorative blobs */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-purple-500 opacity-20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-blue-400 opacity-20 rounded-full blur-3xl pointer-events-none" />
+      <section className="relative overflow-hidden">
+        {/* Subtle grid background */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(37,99,235,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(37,99,235,0.03)_1px,transparent_1px)] bg-[size:60px_60px]" />
+        {/* Gradient overlay */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-blue-50 to-transparent rounded-full blur-3xl opacity-60 pointer-events-none" />
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 flex flex-col lg:flex-row items-center gap-16">
-          
-          {/* Left copy */}
-          <div className="flex-1 text-center lg:text-left">
-            <span className="inline-block bg-white/10 border border-white/20 text-blue-100 text-xs font-semibold px-3 py-1.5 rounded-full mb-6 tracking-wide uppercase">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-24 lg:pt-28 lg:pb-32">
+          <div className="max-w-2xl mx-auto text-center">
+            <div className="inline-flex items-center gap-2 bg-blue-50 border border-blue-100 text-[var(--color-primary)] text-xs font-semibold px-3.5 py-1.5 rounded-full mb-6 fade-up">
+              <Wallet size={14} />
               Personal Finance Made Simple
-            </span>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
-              Take Control of <br />
-              <span className="text-yellow-300">Your Money</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold font-display leading-[1.1] mb-6 fade-up-1 text-[var(--color-text)]">
+              Take control of{" "}
+              <span className="text-[var(--color-primary)]">your money</span>
             </h1>
-            <p className="text-blue-100 text-lg max-w-lg mx-auto lg:mx-0 mb-10 leading-relaxed">
-              Track income, manage expenses, and visualize your financial health — all in one beautiful dashboard.
+
+            <p className="text-lg text-[var(--color-text-secondary)] max-w-lg mx-auto mb-10 leading-relaxed fade-up-2">
+              Track income, manage expenses, and visualize your financial health — all in one clean dashboard.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+
+            <div className="flex flex-col sm:flex-row gap-3 justify-center fade-up-3">
               <button
-                onClick={() => navigate("/register")}
-                className="flex items-center justify-center gap-2 bg-white text-blue-700 font-bold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all"
+                onClick={() => navigate(user ? "/dashboard" : "/register")}
+                className="flex items-center justify-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold px-8 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all"
               >
-                Start for Free <ArrowRight size={18} />
+                {user ? "Go to Dashboard" : "Start for Free"} <ArrowRight size={18} />
               </button>
-              <button
-                onClick={() => navigate("/login")}
-                className="flex items-center justify-center gap-2 border border-white/30 text-white font-semibold px-8 py-3.5 rounded-xl hover:bg-white/10 transition"
-              >
-                Log In
-              </button>
+              {!user && (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex items-center justify-center gap-2 border border-gray-200 text-[var(--color-text-secondary)] font-semibold px-8 py-3.5 rounded-xl hover:bg-gray-50 transition"
+                >
+                  Log In
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Right: mock dashboard card */}
-          <div className="flex-1 w-full max-w-md lg:max-w-none">
-            <div className="bg-white rounded-2xl shadow-2xl p-6 text-gray-900">
-              {/* mini stat row */}
+          {/* Dashboard preview card */}
+          <div className="mt-16 max-w-3xl mx-auto fade-up-4">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-5 sm:p-6">
+              {/* Mini stat row */}
               <div className="grid grid-cols-3 gap-3 mb-5">
                 {[
-                  { label: "Balance", value: "₹1,26,011", color: "text-blue-600", bg: "bg-blue-50" },
-                  { label: "Income", value: "₹1,30,000", color: "text-green-600", bg: "bg-green-50" },
-                  { label: "Expenses", value: "₹3,989", color: "text-red-500", bg: "bg-red-50" },
+                  { label: "Balance", value: "₹1,26,011", color: "text-[var(--color-primary)]", bg: "bg-blue-50" },
+                  { label: "Income", value: "₹1,30,000", color: "text-[var(--color-success)]", bg: "bg-emerald-50" },
+                  { label: "Expenses", value: "₹3,989", color: "text-[var(--color-danger)]", bg: "bg-red-50" },
                 ].map((s) => (
                   <div key={s.label} className={`${s.bg} rounded-xl p-3 text-center`}>
-                    <p className="text-xs text-gray-500 mb-1">{s.label}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] mb-0.5">{s.label}</p>
                     <p className={`text-sm font-bold ${s.color}`}>{s.value}</p>
                   </div>
                 ))}
               </div>
 
-              {/* mini transaction list */}
-              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Recent Transactions</p>
-              <div className="space-y-2">
-                {mockTransactions.map((t) => (
-                  <div key={t.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+              {/* Mini transaction rows */}
+              <div className="space-y-1">
+                {[
+                  { desc: "Freelance Payment", cat: "Income", amount: "+₹45,000", type: "income", date: "Mar 1" },
+                  { desc: "Grocery Shopping", cat: "Food", amount: "-₹2,340", type: "expense", date: "Mar 2" },
+                  { desc: "Netflix Subscription", cat: "Entertainment", amount: "-₹649", type: "expense", date: "Mar 3" },
+                  { desc: "Salary Credit", cat: "Income", amount: "+₹85,000", type: "income", date: "Mar 5" },
+                ].map((t, i) => (
+                  <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-xl hover:bg-gray-50 transition">
                     <div className="flex items-center gap-3">
-                      <div className={`p-2 rounded-full ${t.type === "income" ? "bg-green-100" : "bg-red-100"}`}>
-                        {t.type === "income"
-                          ? <TrendingUp size={14} className="text-green-600" />
-                          : <TrendingDown size={14} className="text-red-500" />}
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${t.type === "income" ? "bg-emerald-50 text-[var(--color-success)]" : "bg-red-50 text-[var(--color-danger)]"}`}>
+                        {t.type === "income" ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-gray-800">{t.desc}</p>
-                        <p className="text-xs text-gray-400">{t.date} · {t.category}</p>
+                        <p className="text-sm font-semibold text-[var(--color-text)]">{t.desc}</p>
+                        <p className="text-xs text-[var(--color-text-muted)]">{t.date} · {t.cat}</p>
                       </div>
                     </div>
-                    <span className={`text-sm font-bold ${t.type === "income" ? "text-green-600" : "text-gray-700"}`}>
+                    <span className={`text-sm font-bold ${t.type === "income" ? "text-[var(--color-success)]" : "text-[var(--color-text-secondary)]"}`}>
                       {t.amount}
                     </span>
                   </div>
@@ -156,75 +171,117 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ── Stats bar ── */}
-      <section className="border-y border-gray-100 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 grid grid-cols-1 sm:grid-cols-3 gap-8 text-center">
-          {[
-            { value: "100%", label: "Free to Use" },
-            { value: "Real-time", label: "Balance Updates" },
-            { value: "₹ INR", label: "Native Currency" },
-          ].map((s) => (
-            <div key={s.label}>
-              <p className="text-3xl font-extrabold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-1">
-                {s.value}
-              </p>
-              <p className="text-gray-500 text-sm">{s.label}</p>
-            </div>
-          ))}
+      {/* ── How it works ── */}
+      <section className="border-y border-gray-100 bg-gray-50/50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold font-display text-[var(--color-text)] mb-3">
+              Get started in 3 steps
+            </h2>
+            <p className="text-[var(--color-text-muted)] max-w-md mx-auto">
+              No credit card, no complex setup. Just sign up and start tracking.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+            {[
+              { step: "1", title: "Create Account", desc: "Sign up in seconds with just your email." },
+              { step: "2", title: "Add Categories", desc: "Set up income and expense categories that fit your life." },
+              { step: "3", title: "Track & Analyze", desc: "Log transactions and see your finances in real time." },
+            ].map((s) => (
+              <div key={s.step} className="text-center">
+                <div className="w-10 h-10 rounded-xl bg-[var(--color-primary)] text-white font-bold text-sm flex items-center justify-center mx-auto mb-4">
+                  {s.step}
+                </div>
+                <h3 className="font-bold text-[var(--color-text)] mb-1">{s.title}</h3>
+                <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── Features ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-3xl font-bold font-display text-[var(--color-text)] mb-3">
             Everything you need to manage money
           </h2>
-          <p className="text-gray-500 max-w-xl mx-auto">
-            A complete toolkit for tracking your personal finances without the complexity.
+          <p className="text-[var(--color-text-muted)] max-w-lg mx-auto">
+            A complete toolkit for personal finance — without the complexity.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((f) => (
             <div
               key={f.title}
-              className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition group"
+              className="bg-white border border-gray-100 rounded-2xl p-6 hover:shadow-md hover:border-gray-200 transition group"
             >
-              <div className={`${f.bg} w-11 h-11 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                {f.icon}
+              <div className={`${f.bg} w-10 h-10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                <f.icon size={20} className={f.color} />
               </div>
-              <h3 className="font-bold text-gray-800 mb-2">{f.title}</h3>
-              <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+              <h3 className="font-bold text-[var(--color-text)] mb-1.5">{f.title}</h3>
+              <p className="text-sm text-[var(--color-text-muted)] leading-relaxed">{f.desc}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── CTA banner ── */}
-      <section className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
-          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4">
+      {/* ── Social proof / trust ── */}
+      <section className="border-t border-gray-100 bg-gray-50/50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold font-display text-[var(--color-text)] mb-8">
+            Why choose ExpenseTracker?
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left max-w-xl mx-auto">
+            {[
+              "100% free — no hidden charges",
+              "No data selling — your finances stay private",
+              "Works on any device — fully responsive",
+              "Built with modern security standards",
+              "Real-time dashboard with charts",
+              "Native ₹ INR formatting throughout",
+            ].map((item) => (
+              <div key={item} className="flex items-start gap-2.5">
+                <CheckCircle2 size={18} className="text-[var(--color-success)] shrink-0 mt-0.5" />
+                <span className="text-sm text-[var(--color-text-secondary)]">{item}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="bg-[var(--sidebar-bg)]">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h2 className="text-2xl sm:text-3xl font-bold font-display text-white mb-4">
             Ready to take charge of your finances?
           </h2>
-          <p className="text-blue-100 mb-10 text-lg">
-            Join and start tracking your money in minutes — no credit card required.
+          <p className="text-slate-400 mb-8 text-base">
+            Join and start tracking your money in minutes.
           </p>
           <button
-            onClick={() => navigate("/register")}
-            className="inline-flex items-center gap-2 bg-white text-blue-700 font-bold px-10 py-4 rounded-xl shadow-lg hover:scale-105 hover:shadow-xl transition-all text-base"
+            onClick={() => navigate(user ? "/dashboard" : "/register")}
+            className="inline-flex items-center gap-2 bg-[var(--color-primary)] hover:bg-[var(--color-primary-hover)] text-white font-bold px-10 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all text-base"
           >
-            Create Free Account <ArrowRight size={20} />
+            {user ? "Open Dashboard" : "Create Free Account"} <ArrowRight size={20} />
           </button>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="bg-gray-900 text-gray-400 text-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <span className="text-base font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-            ExpenseTracker
-          </span>
-          <p>© {new Date().getFullYear()} ExpenseTracker. Built for India 🇮🇳</p>
+      <footer className="border-t border-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="bg-[var(--color-primary)] p-1.5 rounded-lg">
+              <LayoutDashboard size={14} className="text-white" />
+            </div>
+            <span className="text-sm font-bold font-display">
+              Expense<span className="text-[var(--color-primary)]">Tracker</span>
+            </span>
+          </div>
+          <p className="text-sm text-[var(--color-text-muted)]">
+            © {new Date().getFullYear()} ExpenseTracker. Built for India 🇮🇳
+          </p>
         </div>
       </footer>
     </div>
